@@ -122,8 +122,9 @@ int counter = -1;
 bool finalLoop = false;
 Vec3f actualPos;
 
+bool firstPerson;
+
 std::vector<Vec3f> path;
-std::vector<Vec3f> track;
 
 int numCurves = 4;
 std::vector<int> degrees = {3,2,3,3};
@@ -161,7 +162,7 @@ void render() {
   // and attribute config of buffers
   glBindVertexArray(line_vaoID);
   // Draw lines
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, track.size());
+  glDrawArrays(GL_LINE_STRIP, 0, path.size());
   
 }
 
@@ -256,7 +257,12 @@ void loadCartGeometryToGPU() {
                GL_STATIC_DRAW);   // Usage pattern of GPU buffer
 }
 
-void findPath(){
+void loadLineGeometryToGPU() {
+  // read file for control points data identifying:
+  	//number of bezier curves
+		//their degrees
+		//the actual control values
+	//then use the data above to get the intermediate values of the bezier curves for each degree
 	int displacement = 0;
 	Vec3f c0;
 	Vec3f c1;
@@ -294,25 +300,10 @@ void findPath(){
 		}
 		displacement += degrees[i];
 	}
-}
-
-void loadLineGeometryToGPU() {
-  // read file for control points data identifying:
-  	//number of bezier curves
-		//their degrees
-		//the actual control values
-	//then use the data above to get the intermediate values of the bezier curves for each degree
-	findPath();
-	Vec3f beep = Vec3f(1.f, 0.f, 0.f);
-	for(unsigned i = 0; i < path.size(); i++){
-		track.push_back(path[i] + beep);
-		track.push_back(path[i] - beep);
-	}
-
   glBindBuffer(GL_ARRAY_BUFFER, line_vertBufferID);
   glBufferData(GL_ARRAY_BUFFER,
-               sizeof(Vec3f) * track.size(), // byte size of Vec3f
-               track.data(),      // pointer (Vec3f*) to contents of track
+               sizeof(Vec3f) * path.size(), // byte size of Vec3f
+               path.data(),      // pointer (Vec3f*) to contents of path
                GL_STATIC_DRAW);   // Usage pattern of GPU buffer
 }
 
@@ -604,40 +595,48 @@ void windowKeyFunc(GLFWwindow *window, int key, int scancode, int action,
   }
   if (key == GLFW_KEY_F && (action == GLFW_PRESS))
     finalLoop = !finalLoop;
+  if (key == GLFW_KEY_C && (action == GLFW_PRESS))
+    firstPerson = !firstPerson;
 }
 
 //==================== OPENGL HELPER FUNCTIONS ====================//
 
 void moveCamera() {
-  Vec3f dir;
+	if (!firstPerson){
+	  Vec3f dir;
 
-  if (g_moveBackForward) {
-    dir += Vec3f(0, 0, g_moveBackForward * g_panningSpeed);
-  }
-  if (g_moveLeftRight) {
-    dir += Vec3f(g_moveLeftRight * g_panningSpeed, 0, 0);
-  }
-  if (g_moveUpDown) {
-    dir += Vec3f(0, g_moveUpDown * g_panningSpeed, 0);
-  }
+	  if (g_moveBackForward) {
+	    dir += Vec3f(0, 0, g_moveBackForward * g_panningSpeed);
+	  }
+	  if (g_moveLeftRight) {
+	    dir += Vec3f(g_moveLeftRight * g_panningSpeed, 0, 0);
+	  }
+	  if (g_moveUpDown) {
+	    dir += Vec3f(0, g_moveUpDown * g_panningSpeed, 0);
+	  }
 
-  if (g_rotateUpDown) {
-    camera.rotateUpDown(g_rotateUpDown * g_rotationSpeed);
-  }
-  if (g_rotateLeftRight) {
-    camera.rotateLeftRight(g_rotateLeftRight * g_rotationSpeed);
-  }
-  if (g_rotateRoll) {
-    camera.rotateRoll(g_rotateRoll * g_rotationSpeed);
-  }
+	  if (g_rotateUpDown) {
+	    camera.rotateUpDown(g_rotateUpDown * g_rotationSpeed);
+	  }
+	  if (g_rotateLeftRight) {
+	    camera.rotateLeftRight(g_rotateLeftRight * g_rotationSpeed);
+	  }
+	  if (g_rotateRoll) {
+	    camera.rotateRoll(g_rotateRoll * g_rotationSpeed);
+	  }
 
-  if (g_moveUpDown || g_moveLeftRight || g_moveBackForward ||
-      g_rotateLeftRight || g_rotateUpDown || g_rotateRoll) {
-    camera.move(dir);
-    reloadViewMatrix();
-    setupModelViewProjectionTransform();
-    reloadMVPUniform();
-  }
+	  if (g_moveUpDown || g_moveLeftRight || g_moveBackForward ||
+	      g_rotateLeftRight || g_rotateUpDown || g_rotateRoll) {
+	    camera.move(dir);
+	  }
+	} else {
+		camera.m_pos = actualPos + Vec3f(0.f, 10.f, 0.f);
+		camera.m_up = Vec3f(0.f, 1.f, 0.f);
+		camera.m_forward = normalize(actualPos - path[counter-1]) - Vec3f(0.f, 0.5f, 0.f);
+	}
+  reloadViewMatrix();
+  setupModelViewProjectionTransform();
+  reloadMVPUniform();
 }
 
 std::string GL_ERROR() {
