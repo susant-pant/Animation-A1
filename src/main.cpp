@@ -122,10 +122,6 @@ int counter = -1;
 bool finalLoop = false;
 Vec3f actualPos;
 
-Vec3f frenetN;
-Vec3f frenetB;
-Vec3f frenetT;
-
 std::vector<Vec3f> path;
 std::vector<Vec3f> track;
 
@@ -191,42 +187,6 @@ Vec3f normalize(Vec3f vec){
 	return ( vec / vectorLength(vec) );
 }
 
-void buildFrenet(Vec3f currPos, float disp){
-	int sizeOfpath = path.size();
-
-	float distanceToTravel = disp * dt;
-	int nextPoint = counter;
-	while(distanceToTravel > 0){
-		nextPoint++;
-		if (nextPoint >= sizeOfpath)
-			nextPoint = nextPoint % sizeOfpath;
-		distanceToTravel -= findDist(path[nextPoint], currPos);
-	}
-	Vec3f posPlus1 = (1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos;
-
-	distanceToTravel = disp * dt;
-	nextPoint = counter;
-	while(distanceToTravel > 0){
-		nextPoint--;
-		if (nextPoint < 0)
-			nextPoint += sizeOfpath;
-		distanceToTravel -= findDist(currPos, path[nextPoint]);
-	}
-	Vec3f posMinus1 = (1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos;
-
-	Vec3f xVec = posPlus1 - 2*currPos + posMinus1;
-	float x = 0.5 * vectorLength(xVec);
-	Vec3f cVec = posPlus1 - posMinus1;
-	float c = 0.5 * vectorLength(cVec);
-
-	Vec3f perpAccel = xVec / ((x*x) + (c*c));
-	frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
-	frenetT = normalize(posPlus1 - posMinus1);
-	frenetB = normalize(cross(frenetT, frenetN));
-
-	//if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.0000000001){}
-}
-
 float decelVel = -1.f;
 
 void animateCart() {
@@ -265,8 +225,6 @@ void animateCart() {
 			decelVel = -1.f;
 		}
 	}
-
-	buildFrenet(actualPos, velocity);
 
   M = TranslateMatrix(actualPos);
   setupModelViewProjectionTransform();
@@ -346,11 +304,9 @@ void loadLineGeometryToGPU() {
 	//then use the data above to get the intermediate values of the bezier curves for each degree
 	findPath();
 	Vec3f beep = Vec3f(1.f, 0.f, 0.f);
-	float disp = 0.5f;
 	for(unsigned i = 0; i < path.size(); i++){
-		buildFrenet(path[i], disp);
-		track.push_back(path[i] + frenetN);
-		track.push_back(path[i] - frenetN);
+		track.push_back(path[i] + beep);
+		track.push_back(path[i] - beep);
 	}
 
   glBindBuffer(GL_ARRAY_BUFFER, line_vertBufferID);
@@ -472,8 +428,7 @@ void init() {
 
   loadModelViewMatrix();
   reloadProjectionMatrix();
-  buildFrenet(path[0], 0.5f);
-  M = TranslateMatrix(path[0] + frenetB);
+  M = TranslateMatrix(path[0]);
   setupModelViewProjectionTransform();
   reloadMVPUniform();
 }
