@@ -234,13 +234,14 @@ void buildFrenet(Vec3f currPos, float disp){
 
 	frenetT = normalize(posPlus1 - posMinus1);
 
-	if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.0000000001){
+	if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.00001){
 		frenetN = normalize(Vec3f(frenetT.z(), 0.f, -frenetT.x()));
 	} else {
 		Vec3f perpAccel = xVec / ((x*x) + (c*c));
 		frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
 	}
 	frenetB = normalize(cross(frenetT, frenetN));
+	frenetT = normalize(cross(frenetN, frenetB));
 }
 
 void animateCart() {
@@ -283,7 +284,11 @@ void animateCart() {
 
 	buildFrenet(actualPos, velocity);
 
-  M = TranslateMatrix(actualPos + frenetB);
+	M[0] = frenetB.x(); M[1] = frenetN.x(); M[2] = frenetT.x(); M[3] = (actualPos + frenetB).x();
+	M[4] = frenetB.y(); M[5] = frenetN.y(); M[6] = frenetT.y(); M[7] = (actualPos + frenetB).y();
+	M[8] = frenetB.z(); M[9] = frenetN.z(); M[10] = frenetT.z(); M[11] = (actualPos + frenetB).z();
+	M[12] = 0.f; M[13] = 0.f; M[14] = 0.f; M[15] = 1.f;
+  //M = TranslateMatrix(actualPos + frenetB);
   setupModelViewProjectionTransform();
   reloadMVPUniform();
 }
