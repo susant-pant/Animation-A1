@@ -119,6 +119,7 @@ float highPoint = -50.f;
 float velocity = 5.f;
 float dt = 0.077;
 int counter = -1;
+float decelVel = -1.f;
 bool finalLoop = false;
 Vec3f actualPos;
 
@@ -227,8 +228,6 @@ void buildFrenet(Vec3f currPos, float disp){
 	//if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.0000000001){}
 }
 
-float decelVel = -1.f;
-
 void animateCart() {
 	int sizeOfpath = path.size();
 	float distanceToTravel = velocity * dt;
@@ -260,6 +259,7 @@ void animateCart() {
 		if (decelVel < velocity)
 			decelVel = velocity;
 		velocity = decelVel * (cartDist / decelDist);
+
 		if (velocity == 0.f){
 			highPoint = actualPos.y();
 			decelVel = -1.f;
@@ -268,7 +268,7 @@ void animateCart() {
 
 	buildFrenet(actualPos, velocity);
 
-  M = TranslateMatrix(actualPos);
+  M = TranslateMatrix(actualPos + frenetB);
   setupModelViewProjectionTransform();
   reloadMVPUniform();
 }
@@ -345,12 +345,11 @@ void loadLineGeometryToGPU() {
 		//the actual control values
 	//then use the data above to get the intermediate values of the bezier curves for each degree
 	findPath();
-	Vec3f beep = Vec3f(1.f, 0.f, 0.f);
-	float disp = 0.5f;
+	float disp = 0.0001f;
 	for(unsigned i = 0; i < path.size(); i++){
 		buildFrenet(path[i], disp);
-		track.push_back(path[i] + frenetN);
-		track.push_back(path[i] - frenetN);
+		track.push_back(path[i] + 2*frenetN);
+		track.push_back(path[i] - 2*frenetN);
 	}
 
   glBindBuffer(GL_ARRAY_BUFFER, line_vertBufferID);
@@ -472,7 +471,7 @@ void init() {
 
   loadModelViewMatrix();
   reloadProjectionMatrix();
-  buildFrenet(path[0], 0.5f);
+  buildFrenet(path[0], 0.0001f);
   M = TranslateMatrix(path[0] + frenetB);
   setupModelViewProjectionTransform();
   reloadMVPUniform();

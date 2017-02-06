@@ -1,0 +1,5 @@
+make box rotate with track
+make first person camera
+make program read points from file
+make sky blue and grass green
+make a better track
