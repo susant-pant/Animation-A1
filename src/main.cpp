@@ -119,9 +119,12 @@ float highPoint = -50.f;
 float velocity = 5.f;
 float dt = 0.077;
 int counter = -1;
+Vec3f actualPos;
+
+bool firstPerson = false;
+
 float decelVel = -1.f;
 bool finalLoop = false;
-Vec3f actualPos;
 
 Vec3f frenetN;
 Vec3f frenetB;
@@ -199,6 +202,9 @@ Vec3f normalize(Vec3f vec){
 }
 
 void buildFrenet(Vec3f currPos, float disp){
+	if (disp == 0.f)
+		disp = 0.1f;
+
 	int sizeOfpath = path.size();
 
 	float distanceToTravel = disp * dt;
@@ -234,7 +240,6 @@ void buildFrenet(Vec3f currPos, float disp){
 		Vec3f perpAccel = xVec / ((x*x) + (c*c));
 		frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
 	}
-
 	frenetB = normalize(cross(frenetT, frenetN));
 }
 
@@ -355,7 +360,7 @@ void loadLineGeometryToGPU() {
 		//the actual control values
 	//then use the data above to get the intermediate values of the bezier curves for each degree
 	findPath();
-	float disp = 0.0001f;
+	float disp = 0.1f;
 	for(unsigned i = 0; i < path.size(); i++){
 		buildFrenet(path[i], disp);
 		track.push_back(path[i] + frenetN);
@@ -481,7 +486,7 @@ void init() {
 
   loadModelViewMatrix();
   reloadProjectionMatrix();
-  buildFrenet(path[0], 0.0001f);
+  buildFrenet(path[0], 0.1f);
   M = TranslateMatrix(path[0] + frenetB);
   setupModelViewProjectionTransform();
   reloadMVPUniform();
@@ -501,7 +506,7 @@ int main(int argc, char **argv) {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window =
-      glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "CPSC 587/687 Tut03", NULL, NULL);
+      glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "The Roller Coaster Assignment", NULL, NULL);
   if (!window) {
     glfwTerminate();
     exit(EXIT_FAILURE);
@@ -658,40 +663,48 @@ void windowKeyFunc(GLFWwindow *window, int key, int scancode, int action,
   }
   if (key == GLFW_KEY_F && (action == GLFW_PRESS))
     finalLoop = !finalLoop;
+  if (key == GLFW_KEY_C && (action == GLFW_PRESS))
+    firstPerson = !firstPerson;
 }
 
 //==================== OPENGL HELPER FUNCTIONS ====================//
 
 void moveCamera() {
-  Vec3f dir;
+	if (!firstPerson){
+	  Vec3f dir;
 
-  if (g_moveBackForward) {
-    dir += Vec3f(0, 0, g_moveBackForward * g_panningSpeed);
-  }
-  if (g_moveLeftRight) {
-    dir += Vec3f(g_moveLeftRight * g_panningSpeed, 0, 0);
-  }
-  if (g_moveUpDown) {
-    dir += Vec3f(0, g_moveUpDown * g_panningSpeed, 0);
-  }
+	  if (g_moveBackForward) {
+	    dir += Vec3f(0, 0, g_moveBackForward * g_panningSpeed);
+	  }
+	  if (g_moveLeftRight) {
+	    dir += Vec3f(g_moveLeftRight * g_panningSpeed, 0, 0);
+	  }
+	  if (g_moveUpDown) {
+	    dir += Vec3f(0, g_moveUpDown * g_panningSpeed, 0);
+	  }
 
-  if (g_rotateUpDown) {
-    camera.rotateUpDown(g_rotateUpDown * g_rotationSpeed);
-  }
-  if (g_rotateLeftRight) {
-    camera.rotateLeftRight(g_rotateLeftRight * g_rotationSpeed);
-  }
-  if (g_rotateRoll) {
-    camera.rotateRoll(g_rotateRoll * g_rotationSpeed);
-  }
+	  if (g_rotateUpDown) {
+	    camera.rotateUpDown(g_rotateUpDown * g_rotationSpeed);
+	  }
+	  if (g_rotateLeftRight) {
+	    camera.rotateLeftRight(g_rotateLeftRight * g_rotationSpeed);
+	  }
+	  if (g_rotateRoll) {
+	    camera.rotateRoll(g_rotateRoll * g_rotationSpeed);
+	  }
 
-  if (g_moveUpDown || g_moveLeftRight || g_moveBackForward ||
-      g_rotateLeftRight || g_rotateUpDown || g_rotateRoll) {
-    camera.move(dir);
-    reloadViewMatrix();
-    setupModelViewProjectionTransform();
-    reloadMVPUniform();
-  }
+	  if (g_moveUpDown || g_moveLeftRight || g_moveBackForward ||
+	      g_rotateLeftRight || g_rotateUpDown || g_rotateRoll) {
+	    camera.move(dir);
+	  }
+	} else {
+		camera.m_pos = actualPos + Vec3f(0.f, 10.f, 0.f);
+		camera.m_up = Vec3f(0.f, 1.f, 0.f);
+		camera.m_forward = frenetT - Vec3f(0.f, 0.5f, 0.f);
+	}
+  reloadViewMatrix();
+  setupModelViewProjectionTransform();
+  reloadMVPUniform();
 }
 
 std::string GL_ERROR() {

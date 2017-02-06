@@ -40,7 +40,6 @@ public:
   Vec3f const &up() const;
   Vec3f right() const;
 
-private:
   float m_focusDist;
   Vec3f m_pos;
   Vec3f m_up;
