@@ -130,6 +130,7 @@ Vec3f frenetT;
 std::vector<Vec3f> path;
 std::vector<Vec3f> track;
 
+
 int numCurves = 4;
 std::vector<int> degrees = {3,2,3,3};
 std::vector<Vec3f> controlPoints = {
@@ -138,6 +139,11 @@ std::vector<Vec3f> controlPoints = {
 		Vec3f(-100.f, 100.f, 100.f), Vec3f(-100.f, 0.f, 0.f), Vec3f(-50.f, 0.f, -20.f),
 		Vec3f(0.f, 0.f, -40.f), Vec3f(0.f, -50.f, -50.f), Vec3f(-100.f, -50.f, 100.f)
 	};
+
+
+// int numCurves = 1;
+// std::vector<int> degrees = {1};
+// std::vector<Vec3f> controlPoints = { Vec3f(0.f,0.f,0.f), Vec3f(30.f, 30.f, 30.f) };
 
 void render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -220,12 +226,16 @@ void buildFrenet(Vec3f currPos, float disp){
 	Vec3f cVec = posPlus1 - posMinus1;
 	float c = 0.5 * vectorLength(cVec);
 
-	Vec3f perpAccel = xVec / ((x*x) + (c*c));
-	frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
 	frenetT = normalize(posPlus1 - posMinus1);
-	frenetB = normalize(cross(frenetT, frenetN));
 
-	//if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.0000000001){}
+	if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.0000000001){
+		frenetN = normalize(Vec3f(frenetT.z(), 0.f, -frenetT.x()));
+	} else {
+		Vec3f perpAccel = xVec / ((x*x) + (c*c));
+		frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
+	}
+
+	frenetB = normalize(cross(frenetT, frenetN));
 }
 
 void animateCart() {
@@ -348,8 +358,8 @@ void loadLineGeometryToGPU() {
 	float disp = 0.0001f;
 	for(unsigned i = 0; i < path.size(); i++){
 		buildFrenet(path[i], disp);
-		track.push_back(path[i] + 2*frenetN);
-		track.push_back(path[i] - 2*frenetN);
+		track.push_back(path[i] + frenetN);
+		track.push_back(path[i] - frenetN);
 	}
 
   glBindBuffer(GL_ARRAY_BUFFER, line_vertBufferID);
