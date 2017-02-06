@@ -1,0 +1,25 @@
+Potential energy (Ep) = m*g*h
+Kinetic energy (Ek) = 1/2*m*v^2
+
+Delta Potential energy = m*g*(h1 - h0)
+Delta Kinetic energy = m*g*(h0 - h1)
+
+At t = 0, give the cart some Starting energy (Es)
+Also give it some friction (f), also called dampening
+Ek = m*g*(h0-h1) + Es - f*distance
+
+velocity(v) = sqrt((2*Ek)/m)
+distance = prevDistance + v(delta time)
+
+Recall that:
+v(t) = (a@t)*delta time + (v@t-1)
+s(t) = (v@t)*delta time + (s@t-1)
+
+Frenet frames
+Tangent: normalize((P@i+1) - (P@i-1))
+Binormal: cross(tangent, normal)
+Centripetal force:
+1. 	r = (l^2/2x)
+2. 	||Fd||=(m*v^2)/r
+3.	Add to gravity
+4.	Negate and normalize: ((P@i+1) - 2*(P@i) (P@i-1))/l^2

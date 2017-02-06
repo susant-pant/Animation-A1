@@ -1,0 +1,23 @@
+Sample Code
+Written By: Andrew Robert Owens
+Copyright (c) 2017
+
+CPSC587F17 Animaiton
+
+== CONTROLS ==
+w                   : move forward
+s                   : move backward
+a                   : strife left
+d                   : strife right
+q                   : move up
+e                   : move down
+
+arrow left			: rotate to the left
+arrow right			: rotate to the right
+arrow up			: rotates camera up
+arrow down			: rotates camera down
+shift+arrow left	: roll camera left
+shift+arrow right	: roll camera right
+
+space bar			: pause/play
+esc					: exit
