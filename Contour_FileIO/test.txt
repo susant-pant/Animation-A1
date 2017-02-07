@@ -1,0 +1,8 @@
+0	1 9	
+3		4	4.5   
+
+# comments and such
+0 1 2.1213
+100 101 1.11
+2 	34	45
+3 2 1    #comments and such

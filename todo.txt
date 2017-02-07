@@ -1,4 +1,4 @@
 //make box rotate with track
-make program read points from file
+//make program read points from file
 //make sky blue and grass green
-make a better track
+//make a better track (actually nvm it's good enough for a broken frenet frame)
