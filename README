@@ -1,23 +1,32 @@
-Sample Code
-Written By: Andrew Robert Owens
-Copyright (c) 2017
+MOVEMENT CONTROLS
+W: move forward
+S: move backward
+A: move left
+D: move right
+Q: move up
+E: move down
 
-CPSC587F17 Animaiton
+CAMERA CONTROLS
+LEFT ARROW: look left
+RIGHT ARROW: look right
+UP ARROW: look up
+DOWN ARROW: look down
+SHIFT+LEFT ARROW: rotate camera left
+SHIFT+RIGHT ARROW: rotate camera right
+MOUSE: All of the above to some degree
 
-== CONTROLS ==
-w                   : move forward
-s                   : move backward
-a                   : strife left
-d                   : strife right
-q                   : move up
-e                   : move down
+F: Initiate Final Loop (will stop the car after reaching the starting/ending point of the loop)
+C: Go into first-person mode (will approximate being in the car as you ride the roller coaster of death)
 
-arrow left			: rotate to the left
-arrow right			: rotate to the right
-arrow up			: rotates camera up
-arrow down			: rotates camera down
-shift+arrow left	: roll camera left
-shift+arrow right	: roll camera right
+SPACE: Pause/Play animation
+ESC: Close window
 
-space bar			: pause/play
-esc					: exit
+COLLABORATORS
+Cory Jensen
+
+SOURCES
+CODE: Sample Code by Andrew Robert Owens (whose comments are still there, btw, too lazy to get rid of them)
+OTHER FORMULAS: Thanks Jeremy!
+
+COMPILE INSTRUCTIONS
+In the directory with the makefile, type 'make && ./timeToCoast' in the terminal.
