@@ -26,7 +26,7 @@ Cory Jensen
 
 SOURCES
 CODE: Sample Code by Andrew Robert Owens (whose comments are still there, btw, too lazy to get rid of them)
-OTHER FORMULAS: Thanks Jeremy!
+OTHER FORMULAS: See PDF in Master branch.
 
 COMPILE INSTRUCTIONS
 In the directory with the makefile, type 'make && ./timeToCoast' in the terminal.
