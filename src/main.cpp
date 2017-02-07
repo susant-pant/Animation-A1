@@ -223,7 +223,9 @@ void buildFrenet(Vec3f currPos, float disp){
 			nextPoint += sizeOfpath;
 		distanceToTravel -= findDist(path[nextPoint], currPos);
 	}
-	Vec3f posMinus1 = (1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos;
+	Vec3f posMinus1 = -((1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos);
+
+	//Vec3f TwoX = posPlus1 + posMinus1;
 
 	Vec3f xVec = posPlus1 - 2*currPos + posMinus1;
 	float x = 0.5 * vectorLength(xVec);
