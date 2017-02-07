@@ -1,0 +1,15 @@
+For the bean on the wire part, I used conservation of energy. The highest point the cart had reached on the track is saved, and it would be compared with the current height of the cart. Using the formula
+
+v = sqrt(2*g*(highestPoint-currHeight))
+
+I calculated the velocity for any instant, and using that I calculated the next distance to be travelled (distanceToTravel) in a single frame.
+
+That distance was found by first stepping through u-increments of the Bezier spline until we had travelled a distance greater than distanceToTravel. Then, I linearly interpolate backwards between the current and previous u-value until the exact distance is found. This is saved as actualPos, and that is the value used for subsequent calculations.
+
+To calculate the Frenet Frame, I first found the Tangent vector, which was simply finding the point some x distance behind and the same x distance in front of actualPos, and subtracting them to create a close approximation of the tangent frame. The x-value was based on the velocity at actualPos.
+
+The Normal vector doesn't seem to work. It banks on curves, but it is vertical on straight patches. I don't know how to fix this. I've tried both of two methods listed on the guide (pdf provided in the master branch) and taught by our Teaching Assistant, but neither have provided a satisfactory solution to this problem. Even Wikipedia the Almighty couldn't help me.
+
+The Binormal vector is simply the cross product of the tangent and the normal. I implemented a cross product function in the code.
+
+I decided not to do I/O because I didn't want to design another curve on cuspy when my current curve already demonstrates the 'gravity' physics (the only part that works :/ ) pretty well already. That being said, I will probably implement it when I have free-time later on in the semester (or after it's done).
