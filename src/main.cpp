@@ -133,6 +133,7 @@ Vec3f frenetT;
 std::vector<Vec3f> path;
 std::vector<Vec3f> track;
 
+/*
 int numCurves = 2;
 std::vector<int> degrees = {1, 3};
 std::vector<Vec3f> controlPoints = {
@@ -140,11 +141,17 @@ std::vector<Vec3f> controlPoints = {
 		Vec3f(-100.f, 0.f, 0.f), Vec3f(-100.f, 500.f, 0.f), Vec3f(-200.f, 100.f, 0.f)
 
 	};
+*/
 
+int numCurves = 4;
+std::vector<int> degrees = {3,2,3,3};
+std::vector<Vec3f> controlPoints = {
+		Vec3f(-100.f, -50.f, 100.f), Vec3f(-200.f, -50.f, 250.f), Vec3f(100.f, -100.f, 0.f), Vec3f(100.f, 0.f, -50.f),
+		Vec3f(100.f, 100.f, -100.f), Vec3f(0.f, 100.f, 0.f),
+		Vec3f(-100.f, 100.f, 100.f), Vec3f(-100.f, 0.f, 0.f), Vec3f(-50.f, 0.f, -20.f),
+		Vec3f(0.f, 0.f, -40.f), Vec3f(0.f, -50.f, -50.f), Vec3f(-100.f, -50.f, 100.f)
+	};
 
-// int numCurves = 1;
-// std::vector<int> degrees = {1};
-// std::vector<Vec3f> controlPoints = { Vec3f(0.f,0.f,0.f), Vec3f(30.f, 30.f, 30.f) };
 
 void render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -223,15 +230,17 @@ void buildFrenet(Vec3f currPos, float disp){
 			nextPoint += sizeOfpath;
 		distanceToTravel -= findDist(path[nextPoint], currPos);
 	}
-	Vec3f posMinus1 = -((1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos);
+	Vec3f posMinus1 = (1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos;
 
-	//Vec3f TwoX = posPlus1 + posMinus1;
+	/*float radius = ((disp * dt) * (disp * dt)) / vectorLength(posPlus1 - posMinus1);
+	float perpForce = (disp * disp) / radius;
+	Vec3f perpAccel = (normalize(posPlus1 - posMinus1)) * perpForce;*/
 
 	Vec3f xVec = posPlus1 - 2*currPos + posMinus1;
 	float x = 0.5 * vectorLength(xVec);
 	Vec3f cVec = posPlus1 - posMinus1;
 	float c = 0.5 * vectorLength(cVec);
-
+	
 	frenetT = normalize(posPlus1 - posMinus1);
 
 	if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.00001){
