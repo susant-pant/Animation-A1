@@ -19,7 +19,7 @@ LIBS = `pkg-config --libs glfw3 gl` -ldl
 SOURCES=$(wildcard $(SRCDIR)/*cpp) 
 OBJECTS=$(addprefix $(OBJDIR)/,$(notdir $(SOURCES:.cpp=.o)))
 
-EXECUTABLE=QuadAnimation
+EXECUTABLE=timeToCoast
 
 all: $(SOURCES) $(EXECUTABLE)
 
