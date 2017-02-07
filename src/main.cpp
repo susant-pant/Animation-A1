@@ -133,14 +133,12 @@ Vec3f frenetT;
 std::vector<Vec3f> path;
 std::vector<Vec3f> track;
 
-
-int numCurves = 4;
-std::vector<int> degrees = {3,2,3,3};
+int numCurves = 2;
+std::vector<int> degrees = {1, 3};
 std::vector<Vec3f> controlPoints = {
-		Vec3f(-100.f, -50.f, 100.f), Vec3f(-200.f, -50.f, 250.f), Vec3f(100.f, -100.f, 0.f), Vec3f(100.f, 0.f, -50.f),
-		Vec3f(100.f, 100.f, -100.f), Vec3f(0.f, 100.f, 0.f),
-		Vec3f(-100.f, 100.f, 100.f), Vec3f(-100.f, 0.f, 0.f), Vec3f(-50.f, 0.f, -20.f),
-		Vec3f(0.f, 0.f, -40.f), Vec3f(0.f, -50.f, -50.f), Vec3f(-100.f, -50.f, 100.f)
+		Vec3f(0.f, 0.f, 0.f), Vec3f(-50.f, 0.f, 0.f),
+		Vec3f(-100.f, 0.f, 0.f), Vec3f(-100.f, 500.f, 0.f), Vec3f(-200.f, 100.f, 0.f)
+
 	};
 
 
@@ -223,7 +221,7 @@ void buildFrenet(Vec3f currPos, float disp){
 		nextPoint--;
 		if (nextPoint < 0)
 			nextPoint += sizeOfpath;
-		distanceToTravel -= findDist(currPos, path[nextPoint]);
+		distanceToTravel -= findDist(path[nextPoint], currPos);
 	}
 	Vec3f posMinus1 = (1.f-distanceToTravel)*path[nextPoint] + distanceToTravel*currPos;
 
@@ -241,7 +239,6 @@ void buildFrenet(Vec3f currPos, float disp){
 		frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
 	}
 	frenetB = normalize(cross(frenetT, frenetN));
-	frenetT = normalize(cross(frenetN, frenetB));
 }
 
 void animateCart() {
@@ -284,11 +281,11 @@ void animateCart() {
 
 	buildFrenet(actualPos, velocity);
 
-	M[0] = frenetB.x(); M[1] = frenetN.x(); M[2] = frenetT.x(); M[3] = (actualPos + frenetB).x();
+	/*M[0] = frenetB.x(); M[1] = frenetN.x(); M[2] = frenetT.x(); M[3] = (actualPos + frenetB).x();
 	M[4] = frenetB.y(); M[5] = frenetN.y(); M[6] = frenetT.y(); M[7] = (actualPos + frenetB).y();
 	M[8] = frenetB.z(); M[9] = frenetN.z(); M[10] = frenetT.z(); M[11] = (actualPos + frenetB).z();
-	M[12] = 0.f; M[13] = 0.f; M[14] = 0.f; M[15] = 1.f;
-  //M = TranslateMatrix(actualPos + frenetB);
+	M[12] = 0.f; M[13] = 0.f; M[14] = 0.f; M[15] = 1.f;*/
+  M = TranslateMatrix(actualPos + frenetB);
   setupModelViewProjectionTransform();
   reloadMVPUniform();
 }
