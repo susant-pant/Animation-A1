@@ -35,6 +35,8 @@
 #include "OpenGLMatrixTools.h"
 #include "Camera.h"
 
+#include "Vec3f_FileIO.h"
+
 //==================== GLOBAL VARIABLES ====================//
 /*	Put here for simplicity. Feel free to restructure into
 *	appropriate classes or abstractions.
