@@ -246,7 +246,7 @@ void buildFrenet(Vec3f currPos, float disp){
 	if (vectorLength(cross( (posPlus1 - currPos) , (currPos - posMinus1))) < 0.00001){
 		frenetN = normalize(Vec3f(frenetT.z(), 0.f, -frenetT.x()));
 	} else {
-		Vec3f perpAccel = xVec / ((x*x) + (c*c));
+		Vec3f perpAccel = (disp * disp) * (xVec / ((x*x) + (c*c)));
 		frenetN = normalize(perpAccel) - normalize(Vec3f(0.f, gravity, 0.f));
 	}
 	frenetB = normalize(cross(frenetT, frenetN));
