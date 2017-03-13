@@ -1,4 +1,4 @@
-NOTEON BRANCHES
+NOTE ON GIT BRANCHES
 1. MASTER has the 'bean on the wire' part. It's quite good and I'm pretty proud of it. It even has first person camera! But it doesn't have file I/O.
 2. FRENETFRAME has all of my calculations for the frenet frame, building the track, and getting the cart to rotate with the frenet frame so it looks like it's riding along the track. However, it seems the calculations don't work so much of my progress has been commented out so that it looks reasonable as a roller coaster simulator. THIS IS THE ONE TO BE GRADED!
 3. READFILE has the .h file for reading vector data. There isn't anything different from the frenet frame code, though.
