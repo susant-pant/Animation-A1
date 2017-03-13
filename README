@@ -1,0 +1,32 @@
+MOVEMENT CONTROLS
+W: move forward
+S: move backward
+A: move left
+D: move right
+Q: move up
+E: move down
+
+CAMERA CONTROLS
+LEFT ARROW: look left
+RIGHT ARROW: look right
+UP ARROW: look up
+DOWN ARROW: look down
+SHIFT+LEFT ARROW: rotate camera left
+SHIFT+RIGHT ARROW: rotate camera right
+MOUSE: All of the above to some degree
+
+F: Initiate Final Loop (will stop the car after reaching the starting/ending point of the loop)
+C: Go into first-person mode (will approximate being in the car as you ride the roller coaster of death)
+
+SPACE: Pause/Play animation
+ESC: Close window
+
+COLLABORATORS
+Cory Jensen
+
+SOURCES
+CODE: Sample Code by Andrew Robert Owens (whose comments are still there, btw, too lazy to get rid of them)
+OTHER FORMULAS: Thanks Jeremy!
+
+COMPILE INSTRUCTIONS
+In the directory with the makefile, type 'make && ./timeToCoast' in the terminal.
